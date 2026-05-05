@@ -1,4 +1,4 @@
-./server/project.env
+project.env
 # Logs
 logs
 *.log
