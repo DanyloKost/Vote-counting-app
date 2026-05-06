@@ -15,7 +15,7 @@ app.use(express.json());
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 2 * 1024 * 1024 } });
 
-const MONGODB_URI = process.env.MONGODB_URI  || 'mongodb://localhost:27017/elections-v3';
+const MONGODB_URI = process.env.MONGODB_URI;
 const JWT_SECRET  = process.env.JWT_SECRET;
 const EXPIRY_DAYS = parseInt(process.env.ELECTION_EXPIRY_DAYS || '30');
 
