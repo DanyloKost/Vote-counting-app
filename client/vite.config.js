@@ -12,7 +12,7 @@ export default defineConfig({
         changeOrigin: true 
       }
     },
-    allowedHosts: 'election-client-production.up.railway.app' 
+    allowedHosts: true 
   },
   preview: {
     port: 3000,
