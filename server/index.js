@@ -4,10 +4,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-require('dotenv').config({
-  path: './project.env',
-});
+require('dotenv').config({ path: './project.env' });
 
 const app = express();
 app.use(cors());
@@ -661,6 +660,11 @@ app.get('/api/elections', async (req, res) => {
     res.json(elections);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
+// Serve React frontend in production
+const clientDist = path.join(__dirname, '../client/dist');
+app.use(express.static(clientDist));
+app.get('*', (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, '0.0.0.0', () => console.log(`Election server v5 running on :${PORT}`));
