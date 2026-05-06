@@ -44,7 +44,7 @@ export default function ElectionDashboard({ electionId, onBack }) {
   const flash = msg => { setNotice(msg); setTimeout(() => setNotice(''), 3000); };
 
   const handleClose = async () => {
-    if (!window.confirm('Close election and tally results? This cannot be undone.')) return;
+    if (!window.confirm('Close election and tally results?')) return;
     setClosing(true); setError('');
     try {
       const res = await authFetch(`/api/elections/${electionId}/close`, { method: 'POST' });

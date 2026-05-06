@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
+const BASE_URL = process.env.VITE_API_URL;
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -28,15 +29,13 @@ export function AuthProvider({ children }) {
   };
 
   const authFetch = (url, opts = {}) => {
-    // Don't set Content-Type when caller passes a FormData body — the browser
-    // must set it automatically so it can include the multipart boundary.
     const isFormData = opts.body instanceof FormData;
     const headers = {
       ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...(opts.headers || {})
     };
     if (token) headers['Authorization'] = `Bearer ${token}`;
-    return fetch(url, { ...opts, headers });
+    return fetch(`${BASE_URL}${url}`, { ...opts, headers });
   };
 
   return (

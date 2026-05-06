@@ -7,9 +7,9 @@ import ElectionDashboard from './pages/ElectionDashboard';
 
 export default function App() {
   const { user, loading } = useAuth();
-  const [view, setView] = useState('home');  // home | create | dashboard
+  const [view, setView] = useState('home');  
   const [electionId, setElectionId] = useState(null);
-  const [authMode, setAuthMode] = useState('login'); // login | register
+  const [authMode, setAuthMode] = useState('login'); 
 
   if (loading) return (
     <div className="splash">
