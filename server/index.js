@@ -662,9 +662,13 @@ app.get('/api/elections', async (req, res) => {
 });
 
 // Serve React frontend in production
-const clientDist = path.join(__dirname, '../client/dist');
+const clientDist = path.join(__dirname, 'public');
 app.use(express.static(clientDist));
-app.get('*', (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+app.get('*', (req, res, next) => {
+  res.sendFile(path.join(clientDist, 'index.html'), (err) => {
+    if (err) next(err);
+  });
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, '0.0.0.0', () => console.log(`Election server v5 running on :${PORT}`));

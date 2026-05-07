@@ -84,6 +84,9 @@ out
 dist
 .output
 
+# Vite production build (outputs to server/public in this project)
+server/public/
+
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and not Next.js
