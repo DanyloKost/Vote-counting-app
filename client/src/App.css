@@ -100,6 +100,11 @@ input  { font-family:var(--ff-body); }
 .field-label {
   font-family:var(--ff-mono); font-size:.68rem; letter-spacing:.1em;
   text-transform:uppercase; color:var(--muted);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.field-counter {
+  font-size:.68rem; letter-spacing:.05em; color:var(--muted);
+  font-variant-numeric:tabular-nums;
 }
 .field-input {
   background:var(--s2); border:1px solid var(--border);

@@ -15,6 +15,10 @@ const METHODS = {
   trs:       { label: 'Two-Round System',         short: 'TRS',       color: '#f472b6', seats: 'single', ballot: 'plurality',desc: 'If no majority in round 1, top-2 candidates face a runoff in round 2. Used in many national elections.' }
 };
 
+const MAX_CANDIDATES = 30;
+const MAX_CANDIDATE_LEN = 100;
+const MAX_ELECTION_NAME = 200;
+
 export default function CreateElection({ onCreated, onBack }) {
   const { authFetch } = useAuth();
   const [name, setName] = useState('');
@@ -31,12 +35,16 @@ export default function CreateElection({ onCreated, onBack }) {
   const addCandidate = () => {
     const t = candidateInput.trim();
     if (!t || candidates.includes(t)) return;
+    if (t.length > MAX_CANDIDATE_LEN) return setError(`Candidate name must be ${MAX_CANDIDATE_LEN} characters or fewer.`);
+    if (candidates.length >= MAX_CANDIDATES) return setError(`Elections may have at most ${MAX_CANDIDATES} candidates.`);
     setCandidates(p => [...p, t]);
     setCandidateInput('');
+    setError('');
   };
 
   const handleCreate = async () => {
     if (!name.trim()) return setError('Election name is required.');
+    if (name.trim().length > MAX_ELECTION_NAME) return setError(`Election name must be ${MAX_ELECTION_NAME} characters or fewer.`);
     if (candidates.length < 2) return setError('At least 2 candidates required.');
     if (!isSingleOnly && (seats < 1 || seats >= candidates.length))
       return setError(`Seats must be between 1 and ${candidates.length - 1}.`);
@@ -100,12 +108,18 @@ export default function CreateElection({ onCreated, onBack }) {
         )}
 
         <div className="field">
-          <label className="field-label">Candidates</label>
+          <label className="field-label">
+            Candidates
+            <span className="field-counter" style={{ color: candidates.length >= MAX_CANDIDATES ? '#f87171' : undefined }}>
+              {candidates.length}/{MAX_CANDIDATES}
+            </span>
+          </label>
           <div className="add-row">
             <input className="field-input" placeholder="Candidate name…" value={candidateInput}
               onChange={e => setCandidateInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && addCandidate()} />
-            <button className="btn-add" onClick={addCandidate}>Add</button>
+              onKeyDown={e => e.key === 'Enter' && addCandidate()}
+              disabled={candidates.length >= MAX_CANDIDATES} />
+            <button className="btn-add" onClick={addCandidate} disabled={candidates.length >= MAX_CANDIDATES}>Add</button>
           </div>
           {candidates.length > 0 && (
             <ul className="cand-list">

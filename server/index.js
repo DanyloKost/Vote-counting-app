@@ -18,6 +18,11 @@ const MONGODB_URI = process.env.MONGODB_URI;
 const JWT_SECRET  = process.env.JWT_SECRET;
 const EXPIRY_DAYS = parseInt(process.env.ELECTION_EXPIRY_DAYS || '30');
 
+const MAX_CANDIDATES     = 30;
+const MAX_CANDIDATE_LEN  = 100;
+const MAX_ELECTION_NAME  = 200;
+const MAX_BALLOTS        = 10_000;
+
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB error:', err));
@@ -485,6 +490,12 @@ app.post('/api/elections', authRequired, async (req, res) => {
   const { name, candidates, seats, method = 'stv' } = req.body;
   if (!name || !candidates || candidates.length < 2 || !seats || seats < 1)
     return res.status(400).json({ error: 'Invalid election parameters' });
+  if (name.length > MAX_ELECTION_NAME)
+    return res.status(400).json({ error: `Election name must be ${MAX_ELECTION_NAME} characters or fewer` });
+  if (candidates.length > MAX_CANDIDATES)
+    return res.status(400).json({ error: `Elections may have at most ${MAX_CANDIDATES} candidates` });
+  if (candidates.some(c => typeof c !== 'string' || c.length > MAX_CANDIDATE_LEN))
+    return res.status(400).json({ error: `Candidate names must be ${MAX_CANDIDATE_LEN} characters or fewer` });
   if (!METHODS[method]) return res.status(400).json({ error: 'Invalid voting method' });
   const singleSeatOnly = ['irv','condorcet','minimax','coombs','baldwin','plurality','trs'];
   if (singleSeatOnly.includes(method) && Number(seats) !== 1)
@@ -528,6 +539,8 @@ app.post('/api/elections/:id/ballots', async (req, res) => {
   try {
     const election = await Election.findOne({ id: req.params.id });
     if (!election) return res.status(404).json({ error: 'Election not found' });
+    if (election.ballots.length >= MAX_BALLOTS)
+      return res.status(400).json({ error: `This election has reached the limit of ${MAX_BALLOTS.toLocaleString()} ballots` });
     const bt = METHODS[election.method]?.ballotType;
     const ballot = { id: uuidv4() };
     if (bt === 'ranked') {
@@ -589,6 +602,9 @@ app.post('/api/elections/:id/ballots/csv', authRequired, upload.single('file'), 
     if (!election) return res.status(404).json({ error: 'Election not found' });
     if (election.ownerId !== req.user.id) return res.status(403).json({ error: 'Only the owner can import ballots' });
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const remaining = MAX_BALLOTS - election.ballots.length;
+    if (remaining <= 0)
+      return res.status(400).json({ error: `This election has reached the limit of ${MAX_BALLOTS.toLocaleString()} ballots` });
     const text = req.file.buffer.toString('utf-8');
     const rows = parseCSV(text);
     if (rows.length === 0) return res.status(400).json({ error: 'CSV is empty' });
@@ -609,16 +625,18 @@ app.post('/api/elections/:id/ballots/csv', authRequired, upload.single('file'), 
         added.push(ballot);
       } catch (e) { errors.push(`Row ${rowNum}: ${e.message}`); }
     });
-    election.ballots.push(...added);
+    const capped = added.slice(0, remaining);
+    const overflow = added.length - capped.length;
+    election.ballots.push(...capped);
     // Auto-recalculate if the election is closed
-    if (election.status === 'closed' && added.length > 0) {
+    if (election.status === 'closed' && capped.length > 0) {
       const validationError = validateBallotCount(election.method, election.ballots.length, election.seats);
       if (!validationError) {
         election.results = runMethod(election.method, election.ballots, election.candidates, election.seats);
       }
     }
     await election.save();
-    res.json({ imported: added.length, skipped: errors.length, errors, totalBallots: election.ballots.length, recalculated: election.status === 'closed' && added.length > 0 });
+    res.json({ imported: capped.length, skipped: errors.length + overflow, overflow, errors, totalBallots: election.ballots.length, recalculated: election.status === 'closed' && capped.length > 0 });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
