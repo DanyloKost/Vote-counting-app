@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 // ── Ranked ballot (STV / IRV / Borda) ────────────────────────────────────────
 function RankedBallot({ election, onSubmitted }) {
+  const { authFetch } = useAuth();
   const [ranked, setRanked] = useState([]);
   const [unranked, setUnranked] = useState([...election.candidates]);
   const [submitting, setSubmitting] = useState(false);
@@ -25,8 +27,8 @@ function RankedBallot({ election, onSubmitted }) {
     if (!ranked.length) return setError('Rank at least one candidate.');
     setSubmitting(true); setError('');
     try {
-      const res = await fetch(`/api/elections/${election.id}/ballots`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const res = await authFetch(`/api/elections/${election.id}/ballots`, {
+        method: 'POST',
         body: JSON.stringify({ preferences: ranked })
       });
       const data = await res.json();
@@ -83,6 +85,7 @@ function RankedBallot({ election, onSubmitted }) {
 
 // ── Approval ballot ───────────────────────────────────────────────────────────
 function ApprovalBallot({ election, onSubmitted }) {
+  const { authFetch } = useAuth();
   const [approved, setApproved] = useState(new Set());
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -93,8 +96,8 @@ function ApprovalBallot({ election, onSubmitted }) {
     if (!approved.size) return setError('Approve at least one candidate.');
     setSubmitting(true); setError('');
     try {
-      const res = await fetch(`/api/elections/${election.id}/ballots`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const res = await authFetch(`/api/elections/${election.id}/ballots`, {
+        method: 'POST',
         body: JSON.stringify({ approvals: [...approved] })
       });
       const data = await res.json();
@@ -129,6 +132,7 @@ function ApprovalBallot({ election, onSubmitted }) {
 
 // ── Plurality ballot ──────────────────────────────────────────────────────────
 function PluralityBallot({ election, onSubmitted }) {
+  const { authFetch } = useAuth();
   const [choice, setChoice] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -137,8 +141,8 @@ function PluralityBallot({ election, onSubmitted }) {
     if (!choice) return setError('Select a candidate.');
     setSubmitting(true); setError('');
     try {
-      const res = await fetch(`/api/elections/${election.id}/ballots`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+      const res = await authFetch(`/api/elections/${election.id}/ballots`, {
+        method: 'POST',
         body: JSON.stringify({ choice })
       });
       const data = await res.json();

@@ -535,10 +535,12 @@ app.get('/api/elections/:id/ballots', authRequired, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-app.post('/api/elections/:id/ballots', async (req, res) => {
+app.post('/api/elections/:id/ballots', authRequired, async (req, res) => {
   try {
     const election = await Election.findOne({ id: req.params.id });
     if (!election) return res.status(404).json({ error: 'Election not found' });
+    if (election.ownerId !== req.user.id)
+      return res.status(403).json({ error: 'Only the election owner can add ballots' });
     if (election.ballots.length >= MAX_BALLOTS)
       return res.status(400).json({ error: `This election has reached the limit of ${MAX_BALLOTS.toLocaleString()} ballots` });
     const bt = METHODS[election.method]?.ballotType;
@@ -548,12 +550,16 @@ app.post('/api/elections/:id/ballots', async (req, res) => {
       if (!preferences?.length) return res.status(400).json({ error: 'Ranked ballot requires preferences' });
       const invalid = preferences.filter(p => !election.candidates.includes(p));
       if (invalid.length) return res.status(400).json({ error: `Unknown candidates: ${invalid.join(', ')}` });
+      if (new Set(preferences).size !== preferences.length)
+        return res.status(400).json({ error: 'Ranked ballot must not contain duplicate candidates' });
       ballot.preferences = preferences;
     } else if (bt === 'approval') {
       const { approvals } = req.body;
       if (!approvals?.length) return res.status(400).json({ error: 'Approval ballot requires at least one approval' });
       const invalid = approvals.filter(p => !election.candidates.includes(p));
       if (invalid.length) return res.status(400).json({ error: `Unknown candidates: ${invalid.join(', ')}` });
+      if (new Set(approvals).size !== approvals.length)
+        return res.status(400).json({ error: 'Approval ballot must not contain duplicate candidates' });
       ballot.approvals = approvals;
     } else if (bt === 'plurality') {
       const { choice } = req.body;
@@ -619,8 +625,8 @@ app.post('/api/elections/:id/ballots/csv', authRequired, upload.single('file'), 
       if (!vals.length) return;
       try {
         const ballot = { id: uuidv4() };
-        if (bt === 'ranked') { const prefs = vals.filter(v => election.candidates.includes(v)); if (!prefs.length) { errors.push(`Row ${rowNum}: no valid candidates`); return; } ballot.preferences = prefs; }
-        else if (bt === 'approval') { const approvals = vals.filter(v => election.candidates.includes(v)); if (!approvals.length) { errors.push(`Row ${rowNum}: no valid approvals`); return; } ballot.approvals = approvals; }
+        if (bt === 'ranked') { const prefs = [...new Set(vals.filter(v => election.candidates.includes(v)))]; if (!prefs.length) { errors.push(`Row ${rowNum}: no valid candidates`); return; } ballot.preferences = prefs; }
+        else if (bt === 'approval') { const approvals = [...new Set(vals.filter(v => election.candidates.includes(v)))]; if (!approvals.length) { errors.push(`Row ${rowNum}: no valid approvals`); return; } ballot.approvals = approvals; }
         else if (bt === 'plurality') { const choice = vals.find(v => election.candidates.includes(v)); if (!choice) { errors.push(`Row ${rowNum}: no valid choice`); return; } ballot.choice = choice; }
         added.push(ballot);
       } catch (e) { errors.push(`Row ${rowNum}: ${e.message}`); }
