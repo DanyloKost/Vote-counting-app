@@ -130,7 +130,9 @@ export default function ElectionDashboard({ electionId, onBack }) {
                 )}
               </>
             : <div className="closed-note">
-                <p>This election is closed. You can still cast additional ballots — results will be recalculated automatically.</p>
+                <div className='tie-notice'>
+                  <span>This election is closed. You can still cast additional ballots — results will be recalculated automatically.</span>
+                </div>
                 <BallotInput election={election} onSubmitted={() => { flash('Ballot added & results recalculated!'); fetch_(); }} />
               </div>
         )}

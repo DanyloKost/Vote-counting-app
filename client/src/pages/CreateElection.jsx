@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const METHODS = {
-  stv:       { label: 'Single Transferable Vote', short: 'STV',       color: '#c8f545', seats: 'multi',  ballot: 'ranked',   desc: 'Voters rank candidates. Surplus votes transfer until seats filled. Best for proportional multi-seat elections.' },
-  irv:       { label: 'Instant Runoff Voting',    short: 'IRV',       color: '#7ef4c4', seats: 'single', ballot: 'ranked',   desc: 'Voters rank candidates. Weakest eliminated each round until one gets a majority.' },
-  borda:     { label: 'Borda Count',              short: 'Borda',     color: '#c084fc', seats: 'multi',  ballot: 'ranked',   desc: 'Each ranking position awards decreasing points. Candidate with most total points wins.' },
-  condorcet: { label: 'Condorcet (Schulze)',       short: 'Condorcet', color: '#a78bfa', seats: 'single', ballot: 'ranked',   desc: 'Finds the candidate that beats every other in pairwise comparisons, using Schulze path strengths.' },
-  kemeny:    { label: 'Kemeny-Young',             short: 'Kemeny',    color: '#34d399', seats: 'multi',  ballot: 'ranked',   desc: 'Finds the full ranking most consistent with all voter preferences. Elects top S candidates.' },
-  minimax:   { label: 'Minimax',                  short: 'Minimax',   color: '#f59e0b', seats: 'single', ballot: 'ranked',   desc: 'Eliminates the candidate with the biggest worst-case pairwise loss each round.' },
-  coombs:    { label: "Coombs' Method",           short: 'Coombs',    color: '#fb7185', seats: 'single', ballot: 'ranked',   desc: 'Like IRV but eliminates the candidate with the most last-place rankings instead of fewest first-place.' },
-  baldwin:   { label: "Baldwin's Method",         short: 'Baldwin',   color: '#22d3ee', seats: 'single', ballot: 'ranked',   desc: 'Iterative Borda: recompute Borda scores each round and eliminate the lowest scorer until one remains.' },
-  approval:  { label: 'Approval Voting',          short: 'Approval',  color: '#60a5fa', seats: 'multi',  ballot: 'approval', desc: 'Voters approve any number of candidates they accept. Most approvals wins. Reduces strategic voting.' },
-  plurality: { label: 'Plurality Voting',         short: 'Plurality', color: '#fb923c', seats: 'single', ballot: 'plurality',desc: 'Each voter picks one candidate. Most votes wins. Simple, familiar, but can split the vote.' },
-  trs:       { label: 'Two-Round System',         short: 'TRS',       color: '#f472b6', seats: 'single', ballot: 'plurality',desc: 'If no majority in round 1, top-2 candidates face a runoff in round 2. Used in many national elections.' }
+  stv:       { label: 'Single Transferable Vote', short: 'STV', color: '#c8f545', seats: 'multi', ballot: 'ranked', desc: 'Voters rank candidates. Surplus votes transfer until seats filled. Best for proportional multi-seat elections.' },
+  irv:       { label: 'Instant Runoff Voting', short: 'IRV', color: '#7ef4c4', seats: 'single', ballot: 'ranked', desc: 'Voters rank candidates. Weakest eliminated each round until one gets a majority.' },
+  borda:     { label: 'Borda Count', short: 'Borda', color: '#c084fc', seats: 'multi', ballot: 'ranked', desc: 'Each ranking position awards decreasing points. Candidate with most total points wins.' },
+  condorcet: { label: 'Condorcet (Schulze)', short: 'Condorcet', color: '#a78bfa', seats: 'single', ballot: 'ranked', desc: 'Finds the candidate that beats every other in pairwise comparisons, using Schulze path strengths.' },
+  kemeny:    { label: 'Kemeny-Young', short: 'Kemeny', color: '#34d399', seats: 'multi', ballot: 'ranked', desc: 'Finds the full ranking most consistent with all voter preferences. Elects top S candidates.' },
+  minimax:   { label: 'Minimax', short: 'Minimax', color: '#f59e0b', seats: 'single', ballot: 'ranked', desc: 'Eliminates the candidate with the biggest worst-case pairwise loss each round.' },
+  coombs:    { label: "Coombs' Method", short: 'Coombs', color: '#fb7185', seats: 'single', ballot: 'ranked', desc: 'Like IRV but eliminates the candidate with the most last-place rankings instead of fewest first-place.' },
+  baldwin:   { label: "Baldwin's Method", short: 'Baldwin', color: '#22d3ee', seats: 'single', ballot: 'ranked', desc: 'Iterative Borda: recompute Borda scores each round and eliminate the lowest scorer until one remains.' },
+  approval:  { label: 'Approval Voting', short: 'Approval', color: '#60a5fa', seats: 'multi',  ballot: 'approval', desc: 'Voters approve any number of candidates they accept. Most approvals wins. Reduces strategic voting.' },
+  plurality: { label: 'Plurality Voting', short: 'Plurality', color: '#fb923c', seats: 'single', ballot: 'plurality', desc: 'Each voter picks one candidate. Most votes wins. Simple, familiar, but can split the vote.' },
+  trs:       { label: 'Two-Round System', short: 'TRS', color: '#f472b6', seats: 'single', ballot: 'plurality', desc: 'If no majority in round 1, top-2 candidates face a runoff in round 2. Used in many national elections.' }
 };
 
 const MAX_CANDIDATES = 30;

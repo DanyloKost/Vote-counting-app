@@ -94,7 +94,7 @@ export default function HomePage({ onCreate, onOpen }) {
 
           <section className="join-section">
             <h2 className="section-heading">Open by ID</h2>
-            <p className="section-sub">Submit a ballot or view results for any election using its ID.</p>
+            <p className="section-sub">View results for any election using its ID.</p>
             <div className="join-row">
               <input className="field-input" placeholder="Paste election ID…" value={joinId}
                 onChange={e => setJoinId(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleJoin()} />

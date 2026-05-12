@@ -17,7 +17,7 @@
   --ff-display: 'Consolas', arial;
   --ff-body:   'Inter', sans-serif;
   --ff-mono:   'JetBrains Mono', monospace;
-  --radius:    10px;
+  --radius:    5px;
   --shadow:    0 4px 32px rgba(0,0,0,.4);
 }
 
@@ -56,13 +56,6 @@ input  { font-family:var(--ff-body); }
 .auth-bg, .home-bg, .page-bg {
   position:fixed; inset:0; pointer-events:none; z-index:0;
 }
-/* .auth-grid, .home-grid, .page-grid {
-  position:absolute; inset:0;
-  background-image:
-    linear-gradient(rgba(200,245,69,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200,245,69,.03) 1px, transparent 1px);
-  background-size:72px 72px;
-} */
 
 .brand-mark { font-size:1.25em; color:var(--accent); margin-right:.35rem; }
 .brand-name { font-family:var(--ff-display); font-size:1.15rem; font-weight:800; letter-spacing:-.02em; }
@@ -198,7 +191,7 @@ input  { font-family:var(--ff-body); }
 }
 .election-card {
   background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:1.25rem; text-align:left;
+  border-radius:4px; padding:1.25rem; text-align:left;
   transition:border-color .15s, background .15s;
   display:flex; flex-direction:column; gap:.5rem;
 }
@@ -221,7 +214,7 @@ input  { font-family:var(--ff-body); }
 }
 .panel {
   background:var(--surface); border:1px solid var(--border);
-  border-radius:16px; padding:2rem; width:100%; max-width:580px;
+  border-radius:8px; padding:2rem; width:100%; max-width:580px;
   margin-top:2rem; position:relative; z-index:1;
   display:flex; flex-direction:column; gap:1.4rem;
   height:fit-content;
@@ -307,7 +300,7 @@ input  { font-family:var(--ff-body); }
 
 .close-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; padding-top:1.25rem; border-top:1px solid var(--border); }
 .close-hint { font-size:.88rem; color:var(--muted); }
-.closed-note { text-align:center; padding:2.5rem; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:1rem; }
+.closed-note { text-align:center; padding:.5rem; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:1rem; }
 
 .csv-section { display:flex; flex-direction:column; gap:1rem; }
 .sub-title { font-family:var(--ff-display); font-size:1rem; font-weight:700; }
@@ -316,7 +309,7 @@ input  { font-family:var(--ff-body); }
 .csv-format-title { font-size:.82rem; color:var(--muted); margin-bottom:.6rem; }
 .csv-example { font-family:var(--ff-mono); font-size:.78rem; color:var(--accent2); white-space:pre; overflow-x:auto; }
 .csv-drop {
-  border:2px dashed var(--border2); border-radius:10px; padding:2rem;
+  border:2px dashed var(--border2); border-radius:3px; padding:2rem;
   text-align:center; cursor:pointer; color:var(--muted); font-size:.9rem;
   display:flex; flex-direction:column; align-items:center; gap:.75rem;
   transition:border-color .15s, color .15s;
@@ -587,7 +580,7 @@ input  { font-family:var(--ff-body); }
 .tie-notice {
   display: flex; gap: .85rem; align-items: flex-start;
   background: rgba(251,146,60,.08); border: 1px solid rgba(251,146,60,.3);
-  border-radius: 10px; padding: .9rem 1rem;
+  border-radius: 4px; padding: .9rem 1rem;
   animation: fadeUp .25s ease both;
 }
 .tie-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }

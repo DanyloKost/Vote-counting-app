@@ -82,7 +82,6 @@ function RankedBallot({ election, onSubmitted }) {
   );
 }
 
-// ── Approval ballot ───────────────────────────────────────────────────────────
 function ApprovalBallot({ election, onSubmitted }) {
   const { authFetch } = useAuth();
   const [approved, setApproved] = useState(new Set());
@@ -129,7 +128,6 @@ function ApprovalBallot({ election, onSubmitted }) {
   );
 }
 
-// ── Plurality ballot ──────────────────────────────────────────────────────────
 function PluralityBallot({ election, onSubmitted }) {
   const { authFetch } = useAuth();
   const [choice, setChoice] = useState('');
@@ -173,7 +171,6 @@ function PluralityBallot({ election, onSubmitted }) {
   );
 }
 
-// ── Router ────────────────────────────────────────────────────────────────────
 const BALLOT_TYPE = {
   stv: 'ranked', irv: 'ranked', borda: 'ranked',
   approval: 'approval', plurality: 'plurality', trs: 'plurality'

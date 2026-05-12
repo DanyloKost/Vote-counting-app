@@ -19,7 +19,7 @@ const METHOD_EXPLANATIONS = {
   stv: {
     summary: 'Single Transferable Vote is a proportional ranked-choice system designed for multi-seat elections.',
     steps: [
-      { title: 'Droop Quota', body: 'The winning threshold is rounded down votes ÷ (seats + 1) plus one. This guarantees no more winners than seats.' },
+      { title: 'Droop Quota', body: 'The winning threshold (droop quota) is votes ÷ (seats + 1) rounded down. This guarantees no more winners than seats.' },
       { title: 'First preferences counted', body: 'Each ballot\'s top-ranked candidate gets 1 vote.' },
       { title: 'Quota met → elected + surplus transferred', body: 'If a candidate reaches the quota, they are elected. Any votes above the quota are redistributed to next preferences at a fractional transfer value = surplus ÷ total votes.' },
       { title: 'No quota → lowest eliminated', body: 'If nobody reaches the quota, the candidate with fewest votes is eliminated and their votes transfer to next preferences at full value.' },
@@ -252,7 +252,7 @@ function RoundResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color}
           metric={w => w.fillIn ? 'Elected (fill-in)' : `${typeof w.votes === 'number' ? w.votes.toFixed(2) : w.votes} votes · Round ${w.round}`} />
         {quota && (
@@ -318,7 +318,7 @@ function BordaResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color} metric={w => `${w.score} points`} />
         <TieNotice ties={ties} />
         <div className="stat-chip"><span>Max points per ballot</span><strong style={{ color }}>{maxPointsPerBallot}</strong></div>
@@ -343,7 +343,7 @@ function ApprovalResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color} metric={w => `${w.approvals} approvals (${w.pct}%)`} />
         <TieNotice ties={ties} />
         <div className="stat-chip"><span>Total ballots</span><strong>{totalBallots}</strong></div>
@@ -368,7 +368,7 @@ function PluralityResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color} metric={w => `${w.votes} votes (${w.pct}%)`} />
         <TieNotice ties={ties} />
         <div className="stat-chip"><span>Total ballots</span><strong>{totalBallots}</strong></div>
@@ -393,7 +393,7 @@ function TRSResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color} metric={w => `${w.votes} votes (${w.pct}%)`} />
         {outright && <div className="stat-chip"><span>Won outright in round 1</span></div>}
         <div className="stat-chip"><span>Total ballots</span><strong>{totalBallots}</strong></div>
@@ -431,7 +431,7 @@ function CondorcetResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color} metric={w => `${w.wins} pairwise win${w.wins !== 1 ? 's' : ''}`} />
         <TieNotice ties={ties} />
       </div>
@@ -496,7 +496,7 @@ function KemenyResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color} metric={w => `Rank #${w.rank}`} />
         <div className="stat-chip"><span>Kemeny score</span><strong style={{ color }}>{kemenyScore}</strong></div>
       </div>
@@ -525,7 +525,7 @@ function EliminationResults({ results, color }) {
   return (
     <>
       <div className="section">
-        <h3 className="section-title">🏆 Elected</h3>
+        <h3 className="section-title">Elected</h3>
         <WinnerGrid winners={elected} color={color} metric={w => `Won in round ${w.round}`} />
       </div>
       <div className="section">
