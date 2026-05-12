@@ -34,7 +34,7 @@ export default function AuthPage({ mode, onToggleMode }) {
       <div className="auth-card">
         <div className="auth-brand">
           <span className="brand-mark">⬡</span>
-          <span className="brand-name">ElectOS</span>
+          <span className="brand-name">Elector</span>
         </div>
         <h1 className="auth-title">{mode === 'login' ? 'Welcome back' : 'Create account'}</h1>
         <p className="auth-sub">{mode === 'login' ? 'Sign in to manage your elections.' : 'Join to create and manage elections.'}</p>
