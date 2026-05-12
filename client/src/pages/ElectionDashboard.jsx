@@ -69,7 +69,7 @@ export default function ElectionDashboard({ electionId, onBack }) {
 
   if (!election) return (
     <div className="page-wrap">
-      <div className="page-bg"><div className="page-grid" /></div>
+      <div className="page-bg"></div>
       <div className="panel center-panel">{error ? <p className="field-error">{error}</p> : <><div className="spinner" /><p>Loading…</p></>}</div>
     </div>
   );

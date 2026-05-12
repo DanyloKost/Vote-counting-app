@@ -38,7 +38,7 @@ export default function HomePage({ onCreate, onOpen }) {
 
   return (
     <div className="home-page">
-      <div className="home-bg"><div className="home-grid" /></div>
+      <div className="home-bg"></div>
 
       <nav className="topnav">
         <div className="topnav-brand">
@@ -56,7 +56,7 @@ export default function HomePage({ onCreate, onOpen }) {
           <h1 className="hero-  ">Your Elections</h1>
           <p className="hero-sub">Create, manage, and analyse elections with different voting methods.</p>
           <button className="btn-primary" onClick={onCreate}>
-            <span>+</span> New Election
+            + New Election
           </button>
         </div>
 

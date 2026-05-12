@@ -172,7 +172,7 @@ input  { font-family:var(--ff-body); }
 .topnav-user  { font-family:var(--ff-mono); font-size:.8rem; color:var(--muted); }
 
 .home-page { min-height:100vh; position:relative; }
-.home-content { max-width:900px; margin:0 auto; padding:3rem 2rem; position:relative; z-index:1; }
+.home-content { max-width:1200px; margin:0 auto; padding:3rem 2rem; position:relative; z-index:1; }
 .home-hero { margin-bottom:3rem; }
 .hero-title {
   font-family:var(--ff-display); font-size:clamp(2rem,5vw,3rem);

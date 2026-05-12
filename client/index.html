@@ -2,11 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta id="myViewport" name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multi-Method Voting</title>
   </head>
   <body>
     <div id="root"></div>
+    <script> //thx Suresh Atta
+      (function () {
+        var MIN_W = 360, MIN_H = 360;
+        function enforce() {
+          var scale = Math.min(window.innerWidth / MIN_W, window.innerHeight / MIN_H, 1);
+          document.documentElement.style.zoom = scale < 1 ? scale : '';
+        }
+        window.addEventListener('resize', enforce);
+        enforce();
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

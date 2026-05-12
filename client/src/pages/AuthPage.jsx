@@ -30,7 +30,7 @@ export default function AuthPage({ mode, onToggleMode }) {
 
   return (
     <div className="auth-page">
-      <div className="auth-bg"><div className="auth-grid" /></div>
+      <div className="auth-bg"></div>
       <div className="auth-card">
         <div className="auth-brand">
           <span className="brand-mark">⬡</span>

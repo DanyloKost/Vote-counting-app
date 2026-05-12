@@ -64,7 +64,7 @@ export default function CreateElection({ onCreated, onBack }) {
 
   return (
     <div className="page-wrap">
-      <div className="page-bg"><div className="page-grid" /></div>
+      <div className="page-bg"></div>
       <div className="panel">
         <button className="back-link" onClick={onBack}>← Back</button>
         <h2 className="panel-title">New Election</h2>
