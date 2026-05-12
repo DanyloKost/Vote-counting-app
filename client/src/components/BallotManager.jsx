@@ -28,7 +28,7 @@ export default function BallotManager({ election, onBallotChange }) {
   const [ballots, setBallots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [removing, setRemoving] = useState(null); // ballotId being removed
+  const [removing, setRemoving] = useState(null); 
   const [showAdd, setShowAdd] = useState(false);
   const [notice, setNotice] = useState('');
   const [page, setPage] = useState(0);
@@ -94,15 +94,27 @@ export default function BallotManager({ election, onBallotChange }) {
     finally { setCsvUploading(false); }
   };
 
-  const filtered = filter.trim()
-    ? ballots.filter(b => formatBallot(b, bt).toLowerCase().includes(filter.toLowerCase()))
-    : ballots;
+   const applyFilter = (ballot) => {
+    const q = filter.trim().toLowerCase();
+    if (!q) return true;
+    const tokens = q.split(/\s+/);
+    if (bt === 'ranked') {
+      const prefs = (ballot.preferences || []).map(p => p.toLowerCase());
+      return tokens.every(t => prefs.some(p => p.includes(t)));
+    }
+    if (bt === 'approval') {
+      const approvals = (ballot.approvals || []).map(a => a.toLowerCase());
+      return tokens.every(t => approvals.some(a => a.includes(t)));
+    }
+    return (ballot.choice || '').toLowerCase().includes(q);
+  };
+
+  const filtered = filter.trim() ? ballots.filter(applyFilter) : ballots;
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <div className="bm-wrap">
-      {/* Top bar */}
       <div className="bm-topbar">
         <div className="bm-stats">
           <span className="bm-count">{ballots.length} ballot{ballots.length !== 1 ? 's' : ''}</span>
@@ -116,9 +128,6 @@ export default function BallotManager({ election, onBallotChange }) {
           </button>
           <input ref={fileRef} type="file" accept=".csv,text/csv" style={{ display: 'none' }}
             onChange={e => { handleCSV(e.target.files[0]); e.target.value = ''; }} />
-          {/* <button className="btn-primary bm-add-btn" onClick={() => setShowAdd(s => !s)}>
-            {showAdd ? '✕ Cancel' : '+ Add Ballot'}
-          </button> */}
         </div>
       </div>
 
@@ -135,21 +144,12 @@ export default function BallotManager({ election, onBallotChange }) {
         </div>
       )}
 
-      {/* Inline add-ballot form */}
-      {/* {showAdd && (
-        <div className="bm-add-panel">
-          <h4 className="bm-add-title">Add a ballot</h4>
-          <BallotInput election={election} onSubmitted={handleAdded} />
-        </div>
-      )} */}
-
-      {/* Search / filter */}
       {ballots.length > 5 && (
-        <input className="field-input bm-filter" placeholder="Filter ballots…"
+         <input className="field-input bm-filter"
+          placeholder={bt === 'ranked' ? 'Filter ballots with candidate name(s)…' : bt === 'approval' ? 'Filter ballots with approved candidate…' : 'Filter by choice…'}
           value={filter} onChange={e => { setFilter(e.target.value); setPage(0); }} />
       )}
 
-      {/* Ballot list */}
       {loading ? (
         <div className="loading-row"><div className="spinner-sm" /> Loading ballots…</div>
       ) : filtered.length === 0 ? (
@@ -174,7 +174,6 @@ export default function BallotManager({ election, onBallotChange }) {
             ))}
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="bm-pagination">
               <button className="btn-ghost bm-page-btn" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}>←</button>
