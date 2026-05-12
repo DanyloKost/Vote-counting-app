@@ -19,7 +19,7 @@ const METHOD_EXPLANATIONS = {
   stv: {
     summary: 'Single Transferable Vote is a proportional ranked-choice system designed for multi-seat elections.',
     steps: [
-      { title: 'Droop Quota', body: 'The winning threshold is floor(votes ÷ (seats + 1)) + 1. This guarantees no more winners than seats.' },
+      { title: 'Droop Quota', body: 'The winning threshold is rounded down votes ÷ (seats + 1) plus one. This guarantees no more winners than seats.' },
       { title: 'First preferences counted', body: 'Each ballot\'s top-ranked candidate gets 1 vote.' },
       { title: 'Quota met → elected + surplus transferred', body: 'If a candidate reaches the quota, they are elected. Any votes above the quota are redistributed to next preferences at a fractional transfer value = surplus ÷ total votes.' },
       { title: 'No quota → lowest eliminated', body: 'If nobody reaches the quota, the candidate with fewest votes is eliminated and their votes transfer to next preferences at full value.' },
@@ -120,7 +120,6 @@ const METHOD_EXPLANATIONS = {
   }
 };
 
-// Compatible recalculation (mirrors server logic)
 const BALLOT_GROUPS = {
   ranked:   ['stv','irv','borda','condorcet','kemeny','minimax','coombs','baldwin'],
   approval: ['approval'],
@@ -137,7 +136,6 @@ function getCompatible(method, seats) {
   });
 }
 
-// ─── Shared sub-components ────────────────────────────────────────────────────
 function Bar({ value, max, color = '#c8f545', label }) {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
   return (
@@ -179,7 +177,6 @@ function WinnerGrid({ winners, color, metric }) {
   );
 }
 
-// TieNotice: shown in the elected section when score-based ties exist at or within the winning boundary
 function TieNotice({ ties }) {
   if (!ties?.length) return null;
   return (
@@ -247,7 +244,6 @@ function MethodExplainer({ method }) {
   );
 }
 
-// ─── Method-specific result views ─────────────────────────────────────────────
 function RoundResults({ results, color }) {
   const [expanded, setExpanded] = useState(null);
   const { elected, eliminated, rounds, quota } = results;
@@ -520,7 +516,6 @@ function KemenyResults({ results, color }) {
   );
 }
 
-// Shared renderer for Minimax, Coombs, Baldwin — all produce rounds + single winner
 function EliminationResults({ results, color }) {
   const [expanded, setExpanded] = useState(null);
   const { elected, eliminated, rounds } = results;
@@ -599,7 +594,6 @@ function EliminationResults({ results, color }) {
 }
 function isMinimax(results) { return results.method === 'minimax'; }
 
-// ─── Main Results component ───────────────────────────────────────────────────
 export default function Results({ results, election, isOwner, onRecalculate, recalculating }) {
   const { method } = results;
   const meta = METHOD_META[method] || METHOD_META.stv;

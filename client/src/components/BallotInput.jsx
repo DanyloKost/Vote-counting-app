@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-// ── Ranked ballot (STV / IRV / Borda) ────────────────────────────────────────
 function RankedBallot({ election, onSubmitted }) {
   const { authFetch } = useAuth();
   const [ranked, setRanked] = useState([]);

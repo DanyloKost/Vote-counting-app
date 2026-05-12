@@ -27,7 +27,6 @@ mongoose.connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB error:', err));
 
-// ─── Schemas ──────────────────────────────────────────────────────────────────
 const userSchema = new mongoose.Schema({
   id:           { type: String, default: uuidv4, unique: true, index: true },
   username:     { type: String, required: true, unique: true, trim: true, minlength: 3 },
@@ -69,7 +68,6 @@ const electionSchema = new mongoose.Schema({
 });
 const Election = mongoose.model('Election', electionSchema);
 
-// ─── Method Registry ──────────────────────────────────────────────────────────
 const METHODS = {
   stv:       { label: 'Single Transferable Vote', ballotType: 'ranked',    supportsMultiSeat: true,  minBallots: (seats) => seats + 1 },
   irv:       { label: 'Instant Runoff Voting',    ballotType: 'ranked',    supportsMultiSeat: false, minBallots: () => 3 },
@@ -112,13 +110,6 @@ function validateBallotCount(method, ballots, seats) {
   return null;
 }
 
-// ─── Tie Detection Helpers ────────────────────────────────────────────────────
-
-// Detects ties that straddle the seat boundary or occur within the elected set.
-// scoreMap: { candidateName: numericScore }
-// ranked: candidates sorted best→worst
-// seats: number of seats
-// Returns array of { score, candidates, context }
 function detectScoreTies(scoreMap, ranked, seats) {
   const ties = [];
   if (ranked.length < 2) return ties;
@@ -136,27 +127,22 @@ function detectScoreTies(scoreMap, ranked, seats) {
     let context;
     if (minIdx < seats && maxIdx >= seats) context = 'boundary';
     else if (maxIdx < seats)               context = 'within-elected';
-    else                                   continue; // within not-elected — not noteworthy
+    else                                   continue;
     ties.push({ score, candidates: group, context });
   }
   return ties;
 }
 
-// Returns candidates tied with loser at the elimination value (for round-based methods).
 function detectEliminationTie(tallyObj, loser) {
   const loserVal = tallyObj[loser];
   return Object.keys(tallyObj).filter(c => c !== loser && tallyObj[c] === loserVal);
 }
 
-// ─── Tie detection ────────────────────────────────────────────────────────────
-// Returns an array of tie-group descriptions whenever the boundary between
-// elected and not-elected contains candidates with identical scores.
 function detectTies(allCandidates, electedCount, scoreOf) {
   if (allCandidates.length === 0) return [];
   const sorted = [...allCandidates].sort((a, b) => scoreOf(b) - scoreOf(a));
   const ties = [];
 
-  // Tie AT the boundary: last elected score === first not-elected score
   if (electedCount > 0 && electedCount < sorted.length) {
     const lastElected    = sorted[electedCount - 1];
     const firstNotElected = sorted[electedCount];
@@ -170,8 +156,6 @@ function detectTies(allCandidates, electedCount, scoreOf) {
       });
     }
   }
-
-  // Tie entirely WITHIN the elected set (two winners share the same score)
   const electedGroup = sorted.slice(0, electedCount);
   const seen = new Set();
   electedGroup.forEach(c => {
@@ -423,7 +407,6 @@ function runMethod(method, ballots, candidates, seats) {
   }
 }
 
-// ─── CSV Parser ───────────────────────────────────────────────────────────────
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
   return lines.map(line => {
@@ -438,7 +421,6 @@ function parseCSV(text) {
   });
 }
 
-// ─── Auth Middleware ──────────────────────────────────────────────────────────
 function authRequired(req, res, next) {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' });
@@ -446,7 +428,6 @@ function authRequired(req, res, next) {
   catch { res.status(401).json({ error: 'Invalid or expired token' }); }
 }
 
-// ─── Auth Routes ──────────────────────────────────────────────────────────────
 app.post('/api/auth/register', async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || username.length < 3) return res.status(400).json({ error: 'Username must be at least 3 characters' });
@@ -483,7 +464,6 @@ app.get('/api/auth/me', authRequired, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// ─── Election Routes ──────────────────────────────────────────────────────────
 app.get('/api/methods', (req, res) => res.json(METHODS));
 
 app.post('/api/elections', authRequired, async (req, res) => {
@@ -525,7 +505,6 @@ app.get('/api/elections/:id', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// List ballots (owner only)
 app.get('/api/elections/:id/ballots', authRequired, async (req, res) => {
   try {
     const election = await Election.findOne({ id: req.params.id });
@@ -567,7 +546,6 @@ app.post('/api/elections/:id/ballots', authRequired, async (req, res) => {
       ballot.choice = choice;
     }
     election.ballots.push(ballot);
-    // Auto-recalculate if the election is already closed
     if (election.status === 'closed') {
       const validationError = validateBallotCount(election.method, election.ballots.length, election.seats);
       if (!validationError) {
@@ -579,7 +557,6 @@ app.post('/api/elections/:id/ballots', authRequired, async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Delete a single ballot
 app.delete('/api/elections/:id/ballots/:ballotId', authRequired, async (req, res) => {
   try {
     const election = await Election.findOne({ id: req.params.id });
@@ -588,13 +565,12 @@ app.delete('/api/elections/:id/ballots/:ballotId', authRequired, async (req, res
     const before = election.ballots.length;
     election.ballots = election.ballots.filter(b => b.id !== req.params.ballotId);
     if (election.ballots.length === before) return res.status(404).json({ error: 'Ballot not found' });
-    // Auto-recalculate if the election is closed
     if (election.status === 'closed') {
       const validationError = validateBallotCount(election.method, election.ballots.length, election.seats);
       if (!validationError) {
         election.results = runMethod(election.method, election.ballots, election.candidates, election.seats);
       } else {
-        election.results = null; // not enough ballots any more
+        election.results = null;
       }
     }
     await election.save();
@@ -634,7 +610,6 @@ app.post('/api/elections/:id/ballots/csv', authRequired, upload.single('file'), 
     const capped = added.slice(0, remaining);
     const overflow = added.length - capped.length;
     election.ballots.push(...capped);
-    // Auto-recalculate if the election is closed
     if (election.status === 'closed' && capped.length > 0) {
       const validationError = validateBallotCount(election.method, election.ballots.length, election.seats);
       if (!validationError) {
@@ -685,7 +660,6 @@ app.get('/api/elections', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Serve React frontend in production
 const clientDist = path.join(__dirname, 'public');
 app.use(express.static(clientDist));
 app.get('*', (req, res, next) => {

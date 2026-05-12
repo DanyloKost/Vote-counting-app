@@ -187,7 +187,6 @@ input  { font-family:var(--ff-body); }
 }
 .hero-sub { color:var(--muted); max-width:480px; margin-bottom:1.5rem; }
 .home-body { display:grid; gap:2rem; }
-.elections-section {}
 .section-heading { font-family:var(--ff-display); font-size:1.1rem; font-weight:800; margin-bottom:.4rem; letter-spacing:-.02em; }
 .section-sub { color:var(--muted); font-size:.88rem; margin-bottom:1rem; }
 .loading-row { display:flex; align-items:center; gap:.75rem; color:var(--muted); font-size:.9rem; }
@@ -334,7 +333,6 @@ input  { font-family:var(--ff-body); }
 .ballot-instr { font-size:.88rem; color:var(--muted); }
 .ballot-cols { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
 @media(max-width:520px) { .ballot-cols { grid-template-columns:1fr; } }
-.ballot-col {}
 .bcol-title { font-family:var(--ff-mono); font-size:.65rem; text-transform:uppercase; letter-spacing:.1em; color:var(--dim); margin-bottom:.6rem; }
 .bcol-empty { color:var(--dim); font-size:.82rem; font-style:italic; }
 .pool-list { list-style:none; display:flex; flex-direction:column; gap:.35rem; }

@@ -81,8 +81,6 @@ export default function ElectionDashboard({ electionId, onBack }) {
     <div className="page-wrap">
       <div className="page-bg"><div className="page-grid" /></div>
       <div className="panel wide">
-
-        {/* Header */}
         <div className="db-header">
           <button className="back-link" onClick={onBack}>← My Elections</button>
           <div className="db-title-row">
@@ -110,7 +108,6 @@ export default function ElectionDashboard({ electionId, onBack }) {
         {notice && <div className="notice-bar">{notice}</div>}
         {error && <div className="error-bar">{error}</div>}
 
-        {/* Tabs */}
         <div className="tabs">
           {isOwner && <button className={`tab-btn ${tab === 'ballot' ? 'active' : ''}`} onClick={() => setTab('ballot')}>Cast Ballot</button>}
           {isOwner && <button className={`tab-btn ${tab === 'manage' ? 'active' : ''}`} onClick={() => setTab('manage')}>Manage Ballots</button>}
@@ -119,7 +116,6 @@ export default function ElectionDashboard({ electionId, onBack }) {
           </button>
         </div>
 
-        {/* Cast Ballot tab */}
         {tab === 'ballot' && isOwner && (
           election.status === 'open'
             ? <>
@@ -139,7 +135,6 @@ export default function ElectionDashboard({ electionId, onBack }) {
               </div>
         )}
 
-        {/* Manage Ballots tab */}
         {tab === 'manage' && isOwner && (
           election.status === 'open'
           ? <>
@@ -162,7 +157,6 @@ export default function ElectionDashboard({ electionId, onBack }) {
               />
         )}
 
-        {/* Results tab */}
         {tab === 'results' && election.results && (
           <Results
             results={election.results}
