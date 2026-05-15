@@ -1,3 +1,6 @@
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+dns.setDefaultResultOrder('ipv4first');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -23,7 +26,7 @@ const MAX_CANDIDATE_LEN  = 100;
 const MAX_ELECTION_NAME  = 200;
 const MAX_BALLOTS        = 10_000;
 
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, { family: 4 })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB error:', err));
 
@@ -669,4 +672,4 @@ app.get('*', (req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, '0.0.0.0', () => console.log(`Election server v5 running on :${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Election server running on :${PORT}`));
